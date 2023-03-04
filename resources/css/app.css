@@ -1,0 +1,9 @@
+@font-face {
+    font-family: Cabin;
+    src: url(../fonts/Cabin.ttf);
+}
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Cabin;
+}
