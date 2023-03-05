@@ -4,7 +4,7 @@
         <div>
             <input
                 type="text"
-                v-model="enteredText"
+                v-model="internalValue"
             />
         </div>
     </div>
@@ -19,6 +19,12 @@ export default {
         },
     },
 
+    data() {
+        return {
+            internalValue: '',
+        };
+    },
+
     computed: {
         enteredText: {
             get() {
@@ -28,6 +34,23 @@ export default {
                 this.$emit('update:modelValue', value);
             },
         },
+    },
+
+    watch: {
+        internalValue(value) {
+            // Force to uppercase, and remove anything Enigma cannot handle.
+            const trimmed = value.toUpperCase().replaceAll(/[^A-Z]/g, '');
+
+            if (trimmed != value) {
+                this.internalValue = trimmed;
+            }
+
+            this.enteredText = trimmed;
+        }
+    },
+
+    mounted() {
+        this.internalValue = this.modelValue;
     },
 };
 </script>

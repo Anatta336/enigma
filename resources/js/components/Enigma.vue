@@ -42,7 +42,7 @@ export default {
                     rightRotor: {},
                     rightIndex: 0,
                 },
-                input: 'HELLO NETMATTERS',
+                input: 'HELLONETMATTERS',
             },
         };
     },
