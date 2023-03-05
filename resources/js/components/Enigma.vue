@@ -22,8 +22,11 @@ export default {
         return {
             rotors: {
                 leftRotor: {},
+                leftIndex: 0,
                 middleRotor: {},
+                middleIndex: 0,
                 rightRotor: {},
+                rightIndex: 0,
             },
         };
     },

@@ -1,35 +1,64 @@
 <template>
+<div class="configuration">
     <div class="rotor-row">
-        <rotor-select
-            label="Left Rotor"
-            v-model="internalConfig.leftRotor"
-            :all-rotors="fullOptions"
-            :other-rotors="[ internalConfig.middleRotor, internalConfig.rightRotor ]"
-        />
-        <rotor-select
-            label="Middle Rotor"
-            v-model="internalConfig.middleRotor"
-            :all-rotors="fullOptions"
-            :other-rotors="[ internalConfig.leftRotor, internalConfig.rightRotor ]"
-        />
-        <rotor-select
-            label="Right Rotor"
-            v-model="internalConfig.rightRotor"
-            :all-rotors="fullOptions"
-            :other-rotors="[ internalConfig.leftRotor, internalConfig.middleRotor ]"
-        />
+
+        <div class="rotor-wrap">
+            <label>Left Rotor</label>
+            <rotor-select
+                v-model="internalConfig.leftRotor"
+                :all-rotors="fullRotorOptions"
+                :other-rotors="[ internalConfig.middleRotor, internalConfig.rightRotor ]"
+            />
+            <index-select
+                v-model="internalConfig.leftIndex"
+                :index-options="indexOptions"
+            />
+        </div>
+
+        <div class="rotor-wrap">
+            <label>Middle Rotor</label>
+            <rotor-select
+                v-model="internalConfig.middleRotor"
+                :all-rotors="fullRotorOptions"
+                :other-rotors="[ internalConfig.leftRotor, internalConfig.rightRotor ]"
+            />
+            <index-select
+                v-model="internalConfig.middleIndex"
+                :index-options="indexOptions"
+            />
+        </div>
+
+        <div class="rotor-wrap">
+            <label>Right Rotor</label>
+            <rotor-select
+                v-model="internalConfig.rightRotor"
+                :all-rotors="fullRotorOptions"
+                :other-rotors="[ internalConfig.leftRotor, internalConfig.middleRotor ]"
+            />
+            <index-select
+                v-model="internalConfig.rightIndex"
+                :index-options="indexOptions"
+            />
+        </div>
+
     </div>
 
+    <div class="index-row">
+
+    </div>
+</div>
 </template>
 
 <script>
 import VueMultiselect from 'vue-multiselect';
 import RotorSelect from './RotorSelect.vue';
+import IndexSelect from './IndexSelect.vue';
 
 export default {
     components: {
         VueMultiselect,
         RotorSelect,
+        IndexSelect,
     },
 
     props: {
@@ -41,37 +70,48 @@ export default {
 
     data() {
         return {
-            internalConfig: {
-                leftRotor: {},
-                middleRotor: {},
-                rightRotor: {},
-            },
-            fullOptions: [],
+            fullRotorOptions: [],
+            indexOptions: []
         };
     },
 
     computed: {
-
+        internalConfig: {
+            get() {
+                return this.modelValue;
+            },
+            set(value) {
+                this.$emit('update:modelValue', value);
+            },
+        },
     },
 
     methods: {
-        fetchOptions() {
+        fetchRotorOptions() {
             axios.get('/api/v1/rotors').then(response => {
-                this.fullOptions = response.data;
+                this.fullRotorOptions = response.data;
             });
         },
+        generateIndexOptions() {
+            this.indexOptions = [];
+
+            for (let i = 0; i < 26; i++) {
+                this.indexOptions.push(i);
+            }
+        }
     },
 
     mounted() {
         this.internalConfig = this.modelValue;
 
-        this.fetchOptions();
+        this.fetchRotorOptions();
+        this.generateIndexOptions();
     },
 };
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
 
-<style scoped>
+<style lang="scss" scoped>
 .rotor-row {
     display: flex;
     flex-direction: row;
@@ -79,5 +119,14 @@ export default {
     justify-content: center;
     align-items: center;
     margin: -5px;
+}
+
+.rotor-wrap {
+    min-width: 175px;
+    margin: 5px;
+
+    &>* {
+        margin: 5px
+    }
 }
 </style>

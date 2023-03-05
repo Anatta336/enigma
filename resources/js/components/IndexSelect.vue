@@ -1,11 +1,9 @@
 <template>
     <vue-multiselect
-        v-model="selectedRotor"
-        :options="filteredOptions"
-        label="name"
-        track-by="name"
+        v-model="selectedIndex"
+        :options="indexOptions"
         :multiple="false"
-        placeholder="Select Rotor"
+        placeholder="Select Index"
         :searchable="false"
         :allow-empty="false"
         :showLabels="false"
@@ -22,14 +20,10 @@ export default {
 
     props: {
         modelValue: {
-            type: Object,
+            type: Number,
             required: true,
         },
-        allRotors: {
-            type: Array,
-            required: true,
-        },
-        otherRotors: {
+        indexOptions: {
             type: Array,
             required: true,
         },
@@ -37,12 +31,12 @@ export default {
 
     data() {
         return {
-            internalValue: {},
+            internalValue: 0,
         };
     },
 
     computed: {
-        selectedRotor: {
+        selectedIndex: {
             get() {
                 return this.internalValue;
             },
@@ -50,18 +44,6 @@ export default {
                 this.internalValue = value;
                 this.$emit('update:modelValue', this.internalValue);
             },
-        },
-        filteredOptions: {
-            get() {
-                return this.allRotors.map((item) => {
-                    const isInUse = !!this.otherRotors.find(rotor => rotor.name == item.name);
-
-                    return {
-                        $isDisabled: isInUse,
-                        ...item,
-                    };
-                });
-            }
         },
     },
 }
