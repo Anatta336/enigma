@@ -2,7 +2,7 @@
 <div class="configuration">
     <div class="rotor-row">
 
-        <div class="rotor-wrap">
+        <div class="wrap">
             <label>Left Rotor</label>
             <rotor-select
                 v-model="internalConfig.leftRotor"
@@ -15,7 +15,7 @@
             />
         </div>
 
-        <div class="rotor-wrap">
+        <div class="wrap">
             <label>Middle Rotor</label>
             <rotor-select
                 v-model="internalConfig.middleRotor"
@@ -28,7 +28,7 @@
             />
         </div>
 
-        <div class="rotor-wrap">
+        <div class="wrap">
             <label>Right Rotor</label>
             <rotor-select
                 v-model="internalConfig.rightRotor"
@@ -121,7 +121,7 @@ export default {
     margin: -5px;
 }
 
-.rotor-wrap {
+.wrap {
     min-width: 175px;
     margin: 5px;
 

@@ -6,36 +6,45 @@
             <h1>Enigma</h1>
         </header>
 
-        <div class="content">
+        <div class="settings">
             <rotor-configuration
-                v-model="rotors"
+                v-model="params.rotors"
             />
         </div>
+
+        <div class="input">
+            <text-input
+                v-model="params.input"
+            />
+        </div>
+
     </section>
 </div>
 </template>
 
 <script>
 import RotorConfiguration from './RotorConfiguration.vue';
+import TextInput from './TextInput.vue';
 
 export default {
     components: {
         RotorConfiguration,
+        TextInput,
     },
     data() {
         return {
-            rotors: {
-                leftRotor: {},
-                leftIndex: 0,
-                middleRotor: {},
-                middleIndex: 0,
-                rightRotor: {},
-                rightIndex: 0,
+            params: {
+                rotors: {
+                    leftRotor: {},
+                    leftIndex: 0,
+                    middleRotor: {},
+                    middleIndex: 0,
+                    rightRotor: {},
+                    rightIndex: 0,
+                },
+                input: 'HELLO NETMATTERS',
             },
         };
-    },
-    methods: {
-
     },
 };
 </script>
@@ -62,15 +71,18 @@ export default {
     border-radius: 5px;
     box-shadow: 3px 5px 10px 1px #00000063, inset 0px 0px 3px 1px #e7ede8;
 
-    header {
+    &>* {
         padding: 15px;
-        border-bottom: 1px solid #716e5042;
-        box-shadow: 0px 1px 0px 0 #e7ede8c4;
-        text-align: center;
     }
 
-    .content {
-        padding: 20px;
+    &>*:not(:last-child) {
+        border-bottom: 1px solid #716e5042;
+        box-shadow: 0px 1px 0px 0 #e7ede8c4;
+
+    }
+
+    header {
+        text-align: center;
     }
 }
 
