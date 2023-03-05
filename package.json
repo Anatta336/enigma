@@ -13,5 +13,8 @@
         "vue": "^3",
         "vue-loader": "^16",
         "vue-template-compiler": "^2.7.14"
+    },
+    "dependencies": {
+        "vue-multiselect": "^3.0.0-beta.1"
     }
 }
