@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Log;
  * A signal enters the rotor with one value and is mapped according to the wiring and
  * rotation of that rotor.
  *
- * Note this isn't a Laravel model. Should it still be in the Models namespace? Maybe.
+ * Input and output are handled as integer values. As a circle it's somewhat arbitrary where
+ * 'zero' is. We're using where A would be when the index ring is in position 0.
  *
  * @TODO: Movement of rotors, but during encoding and through wheel settings.
  */
@@ -47,6 +48,9 @@ class Rotor
     public readonly array $mappingRightToLeft;
     public readonly array $mappingLeftToRight;
 
+    protected int $indexRingPosition = 0;
+    protected int $rotation = 0;
+
     public function __construct(array $mapping)
     {
         assert(count(array_keys($mapping)) == 26,
@@ -74,7 +78,11 @@ class Rotor
     {
         ValidValue::assertValidValue($input);
 
-        return $this->mappingRightToLeft[$input];
+        return $this->revertOffset(
+            $this->mappingRightToLeft[
+                $this->applyOffset($input)
+            ]
+        );
     }
 
     /**
@@ -87,11 +95,63 @@ class Rotor
     {
         ValidValue::assertValidValue($input);
 
-        return $this->mappingLeftToRight[$input];
+        return $this->revertOffset(
+            $this->mappingLeftToRight[
+                $this->applyOffset($input)
+            ]
+        );
     }
 
     public function checkIfSymmetric(): bool
     {
         return $this->mappingLeftToRight === $this->mappingRightToLeft;
+    }
+
+    public function setIndexRingPosition(int $index): static
+    {
+        assert($index >= 0 && $index <= 25,
+            "Rotor index ring position must be between 0 and 25. {$index} given."
+        );
+
+        $this->indexRingPosition = $index;
+
+        return $this;
+    }
+
+    public function setRotation(int $index): static
+    {
+        assert($index >= 0 && $index <= 25,
+            "Rotor rotation must be between 0 and 25. {$index} given."
+        );
+
+        $this->rotation = $index;
+
+        return $this;
+    }
+
+    protected function applyOffset(int $value): int
+    {
+        $value += $this->indexRingPosition + $this->rotation;
+
+        // Using modulo to "wrap around" so 26 becomes 0, 27 becomes 1, etc.
+        $value %= 26;
+
+        // Modulo can give a negative value, which needs correcting.
+        $value += $value < 0 ? 26 : 0;
+
+        return $value;
+    }
+
+    protected function revertOffset(int $value): int
+    {
+        $value -= $this->indexRingPosition + $this->rotation;
+
+        // Using modulo to "wrap around" so 26 becomes 0, 27 becomes 1, etc.
+        $value %= 26;
+
+        // Modulo can give a negative value, which needs correcting.
+        $value += $value < 0 ? 26 : 0;
+
+        return $value;
     }
 }
