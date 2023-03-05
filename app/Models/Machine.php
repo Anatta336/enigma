@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Service\Alphabet;
+use App\Service\Stepper;
 
 /**
  * Represents the current state of an Enigma I machine.
@@ -28,17 +29,19 @@ class Machine
     public function __construct(Reflector $reflector,
         Rotor $leftRotor, Rotor $middleRotor, Rotor $rightRotor)
     {
-        $this->reflector = $reflector;
-        $this->leftRotor = $leftRotor;
+        $this->reflector   = $reflector;
+        $this->leftRotor   = $leftRotor;
         $this->middleRotor = $middleRotor;
-        $this->rightRotor = $rightRotor;
+        $this->rightRotor  = $rightRotor;
     }
 
-    public function encryptLetter(string $input): string
+    public function encryptLetter(string $input, bool $enableRotation = true): string
     {
         $value = Alphabet::letterToValue($input);
 
-        // @TODO advance rotor rotation(s)
+        if ($enableRotation) {
+            Stepper::advance($this->leftRotor, $this->middleRotor, $this->rightRotor);
+        }
 
         // @TODO plugboard as first step.
 
@@ -52,7 +55,7 @@ class Machine
         $value = $this->middleRotor->encodeFromLeft($value);
         $value = $this->rightRotor->encodeFromLeft($value);
 
-        // @TODO plugboard again
+        // @TODO plugboard again as final step.
 
         return Alphabet::valueToLetter($value);
     }

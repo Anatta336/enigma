@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Service\Alphabet;
+use App\Service\Rotation;
 use App\Service\ValidValue;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -15,8 +16,6 @@ use Illuminate\Support\Facades\Log;
  *
  * Input and output are handled as integer values. As a circle it's somewhat arbitrary where
  * 'zero' is. We're using where A would be when the index ring is in position 0.
- *
- * @TODO: Movement of rotors, but during encoding and through wheel settings.
  */
 class Rotor
 {
@@ -32,26 +31,44 @@ class Rotor
             return null;
         }
 
-        return static::fromAlphaMapping($alphaMapping);
+        assert(isset($config['notch']),
+            "Attempt to create Rotor that has no notch position in config. \$rotorName: {$rotorName}"
+        );
+        $notchPosition = Alphabet::letterToValue($config['notch']);
+
+        return static::fromAlphaMapping($alphaMapping, $notchPosition);
     }
 
-    protected static function fromAlphaMapping(array $alphaMapping): ?static
+    protected static function fromAlphaMapping(array $alphaMapping, int $notchPosition = 0): ?static
     {
         // Convert the alphabetical mapping into integer values.
         // The (...) syntax is using PHP 8.1's first-class callables.
         $mapping = Arr::map($alphaMapping, Alphabet::letterToValue(...));
 
-        return new static($mapping);
+        return new static($mapping, $notchPosition);
     }
 
     // PHP 8.1's readonly means these can be initialised but then never changed.
     public readonly array $mappingRightToLeft;
     public readonly array $mappingLeftToRight;
 
+    public readonly int $notchPosition;
+
+    /**
+     * Represents the offset of the wiring within the wheel. Unlike rotation, it doesn't move the notch.
+     *
+     * This value will remain constant while encoding an individual message.
+     */
     protected int $indexRingPosition = 0;
+
+    /**
+     * Represents the rotation of the whole wheel, wiring and notch.
+     *
+     * This value may change during the process of encoding a message.
+     */
     protected int $rotation = 0;
 
-    public function __construct(array $mapping)
+    public function __construct(array $mapping, int $notchPosition = 0)
     {
         assert(count(array_keys($mapping)) == 26,
             'Rotor must have a mapping with 26 values.'
@@ -65,6 +82,8 @@ class Rotor
 
         $this->mappingRightToLeft = $mapping;
         $this->mappingLeftToRight = array_flip($mapping);
+
+        $this->notchPosition = $notchPosition;
     }
 
     /**
@@ -109,49 +128,39 @@ class Rotor
 
     public function setIndexRingPosition(int $index): static
     {
-        assert($index >= 0 && $index <= 25,
-            "Rotor index ring position must be between 0 and 25. {$index} given."
-        );
-
-        $this->indexRingPosition = $index;
+        $this->indexRingPosition = Rotation::constrainByLooping($index);
 
         return $this;
+    }
+
+    public function getRotation(): int
+    {
+        return $this->rotation;
     }
 
     public function setRotation(int $index): static
     {
-        assert($index >= 0 && $index <= 25,
-            "Rotor rotation must be between 0 and 25. {$index} given."
-        );
-
-        $this->rotation = $index;
+        $this->rotation = Rotation::constrainByLooping($index);
 
         return $this;
     }
 
+    /**
+     * @return int Position of the notch relative to the "bottom" of the rotor.
+     *             When the notch is at relative position 0 it's at the bottom.
+     */
+    public function getNotchRelativePosition(): int
+    {
+        return Rotation::constrainByLooping($this->notchPosition - $this->rotation);
+    }
+
     protected function applyOffset(int $value): int
     {
-        $value += $this->indexRingPosition + $this->rotation;
-
-        // Using modulo to "wrap around" so 26 becomes 0, 27 becomes 1, etc.
-        $value %= 26;
-
-        // Modulo can give a negative value, which needs correcting.
-        $value += $value < 0 ? 26 : 0;
-
-        return $value;
+        return Rotation::constrainByLooping($value + $this->indexRingPosition + $this->rotation);
     }
 
     protected function revertOffset(int $value): int
     {
-        $value -= $this->indexRingPosition + $this->rotation;
-
-        // Using modulo to "wrap around" so 26 becomes 0, 27 becomes 1, etc.
-        $value %= 26;
-
-        // Modulo can give a negative value, which needs correcting.
-        $value += $value < 0 ? 26 : 0;
-
-        return $value;
+        return Rotation::constrainByLooping($value - ($this->indexRingPosition + $this->rotation));
     }
 }

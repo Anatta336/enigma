@@ -1,6 +1,7 @@
 <?php
 
 return [
+    // Wiring information from https://www.cryptomuseum.com/crypto/enigma/i/index.htm
     'rotors' => [
         // Mappings are given for ring setting 0, with the first letter what an 'A' would map to, then 'B', etc.,
         [
