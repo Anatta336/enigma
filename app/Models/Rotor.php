@@ -8,28 +8,39 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 /**
+ * Represents one of the rotors in the Enigma.
+ *
+ * A signal enters the rotor with one value and is mapped according to the wiring and
+ * rotation of that rotor.
+ *
  * Note this isn't a Laravel model. Should it still be in the Models namespace? Maybe.
+ *
+ * @TODO: Movement of rotors, but during encoding and through wheel settings.
  */
 class Rotor
 {
-    public static function fromConfig(string $configName): ?Rotor
+    public static function fromConfig(string $rotorName): ?static
     {
-        $alphaMapping = config('rotors.'.$configName.'.mapping');
+        $config = Arr::first(config('enigma.rotors'), function ($value) use ($rotorName) {
+            return $value['name'] === $rotorName;
+        });
+
+        $alphaMapping = $config['mapping'];
         if (!$alphaMapping) {
-            Log::error("Attempt to create Rotor that has no config. \$configName: {$configName}");
+            Log::error("Attempt to create Rotor that has no config. \$rotorName: {$rotorName}");
             return null;
         }
 
-        return self::fromAlphaMapping($alphaMapping);
+        return static::fromAlphaMapping($alphaMapping);
     }
 
-    protected static function fromAlphaMapping(array $alphaMapping): ?Rotor
+    protected static function fromAlphaMapping(array $alphaMapping): ?static
     {
         // Convert the alphabetical mapping into integer values.
         // The (...) syntax is using PHP 8.1's first-class callables.
         $mapping = Arr::map($alphaMapping, Alphabet::letterToValue(...));
 
-        return new Rotor($mapping);
+        return new static($mapping);
     }
 
     // PHP 8.1's readonly means these can be initialised but then never changed.
