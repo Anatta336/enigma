@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Models;
 
 use App\Service\Alphabet;
 use App\Service\ValidValue;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-
 
 /**
  * Note this isn't a Laravel model. Should it still be in the Models namespace? Maybe.
@@ -20,6 +20,11 @@ class Rotor
             return null;
         }
 
+        return self::fromAlphaMapping($alphaMapping);
+    }
+
+    protected static function fromAlphaMapping(array $alphaMapping): ?Rotor
+    {
         // Convert the alphabetical mapping into integer values.
         // The (...) syntax is using PHP 8.1's first-class callables.
         $mapping = Arr::map($alphaMapping, Alphabet::letterToValue(...));
@@ -72,5 +77,10 @@ class Rotor
         ValidValue::assertValidValue($input);
 
         return $this->mappingLeftToRight[$input];
+    }
+
+    public function checkIfSymmetric(): bool
+    {
+        return $this->mappingLeftToRight === $this->mappingRightToLeft;
     }
 }
