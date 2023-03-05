@@ -1,13 +1,15 @@
 <template>
-    <vue-multiselect
-        v-model="selectedIndex"
-        :options="indexOptions"
-        :multiple="false"
-        placeholder="Select Index"
-        :searchable="false"
-        :allow-empty="false"
-        :showLabels="false"
-    />
+    <div>
+        <vue-multiselect
+            v-model="selectedIndex"
+            :options="indexOptions"
+            :multiple="false"
+            placeholder="Select Index"
+            :searchable="false"
+            :allow-empty="false"
+            :showLabels="false"
+        />
+    </div>
 </template>
 
 <script>

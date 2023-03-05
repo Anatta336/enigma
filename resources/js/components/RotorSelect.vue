@@ -1,15 +1,17 @@
 <template>
-    <vue-multiselect
-        v-model="selectedRotor"
-        :options="filteredOptions"
-        label="name"
-        track-by="name"
-        :multiple="false"
-        placeholder="Select Rotor"
-        :searchable="false"
-        :allow-empty="false"
-        :showLabels="false"
-    />
+    <div>
+        <vue-multiselect
+            v-model="selectedRotor"
+            :options="filteredOptions"
+            label="name"
+            track-by="name"
+            :multiple="false"
+            placeholder="Select Rotor"
+            :searchable="false"
+            :allow-empty="false"
+            :showLabels="false"
+        />
+    </div>
 </template>
 
 <script>
