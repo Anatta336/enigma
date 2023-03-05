@@ -2,10 +2,10 @@ import './bootstrap';
 import '../css/app.css';
 
 import { createApp } from 'vue';
-import ExampleComponent from './components/Example.vue';
+import EnigmaApp from './components/Enigma.vue';
 
 createApp({
     components: {
-        ExampleComponent
+        EnigmaApp
     }
 }).mount('#app');

@@ -10,7 +10,7 @@
     </head>
     <body>
         <div id="app">
-            <example-component>
+            <enigma-app>
         </div>
     </body>
 </html>

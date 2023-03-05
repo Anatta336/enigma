@@ -4,23 +4,23 @@
     <div class="card">
         <h1>Enigma</h1>
 
-        <machine-configuration
-            v-model="config"
+        <rotor-configuration
+            v-model="rotors"
         />
     </div>
 </div>
 </template>
 
 <script>
-import MachineConfiguration from './Configuration.vue';
+import RotorConfiguration from './RotorConfiguration.vue';
 
 export default {
     components: {
-        MachineConfiguration,
+        RotorConfiguration,
     },
     data() {
         return {
-            config: {
+            rotors: {
                 leftRotor: {},
                 middleRotor: {},
                 rightRotor: {},
