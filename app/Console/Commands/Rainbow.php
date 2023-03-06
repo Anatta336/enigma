@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Machine;
 use App\Models\Reflector;
 use App\Models\Rotor;
+use App\Service\Rainbow as ServiceRainbow;
 use App\Service\Rotation;
 use Generator;
 use Illuminate\Console\Command;
@@ -39,8 +40,8 @@ class Rainbow extends Command
 
                 // Store results as a set in Redis, keyed by the output.
                 // Using sets as it's possible for multiple settings to result in the same output.
-                $key = $input.'.'.$encrypted;
-                $value = $this->encodeSettings($rotors, $indices);
+                $key = ServiceRainbow::encodeKey($input, $encrypted);
+                $value = ServiceRainbow::encodeSettings($rotors, $indices);
 
                 // Only add if it's not already there.
                 if (!Redis::sismember($key, $value)) {
@@ -101,16 +102,6 @@ class Rainbow extends Command
                 }
             }
         }
-    }
-
-    protected function encodeSettings(array $rotors, array $indices): string
-    {
-        return $rotors[0].'.'
-            .$indices[0].'.'
-            .$rotors[1].'.'
-            .$indices[1].'.'
-            .$rotors[2].'.'
-            .$indices[2];
     }
 
     protected function encrypt(array $rotors, array $indices, string $input): string

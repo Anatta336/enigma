@@ -1,6 +1,6 @@
 <template>
     <div class="wrap">
-        <label>Input</label>
+        <label>{{ label }}</label>
         <div>
             <input
                 type="text"
@@ -18,6 +18,10 @@ export default {
             type: String,
             required: true,
         },
+        label: {
+            type: String,
+            required: true,
+        }
     },
 
     data() {

@@ -1,7 +1,5 @@
 <template>
-<div class="body">
-
-    <section class="card">
+    <section>
         <header>
             <h1>Enigma</h1>
         </header>
@@ -14,12 +12,13 @@
 
         <div class="input">
             <text-input
+                label="Input"
                 v-model="params.input"
             />
         </div>
 
         <div class="control">
-            <run-button
+            <encode-button
                 :params="params"
                 @encoded="onEncoded"
             />
@@ -32,21 +31,20 @@
         </div>
 
     </section>
-</div>
 </template>
 
 <script>
 import RotorConfiguration from './RotorConfiguration.vue';
-import TextInput from './TextInput.vue';
+import TextInput from '../shared/TextInput.vue';
 import TextOutput from './TextOutput.vue';
-import RunButton from './RunButton.vue';
+import EncodeButton from './EncodeButton.vue';
 
 export default {
     components: {
         RotorConfiguration,
         TextInput,
         TextOutput,
-        RunButton,
+        EncodeButton,
     },
 
     data() {
@@ -62,7 +60,7 @@ export default {
                 },
                 input: 'HELLONETMATTERS',
             },
-            output: 'SOMETHING',
+            output: '',
         };
     },
 
@@ -73,26 +71,8 @@ export default {
     },
 };
 </script>
-
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
-
 <style lang="scss" scoped>
-.rotor-selects {
-    display: flex;
-    flex-direction: row;
-}
-
-.body {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    background-color: #a7b7de;
-}
-
-.card {
+section {
     background-color: #bec6af;
     color: #2d2d44;;
     border-radius: 5px;
@@ -112,5 +92,4 @@ export default {
         text-align: center;
     }
 }
-
 </style>

@@ -10,7 +10,7 @@
     </head>
     <body>
         <div id="app">
-            <enigma-app>
+            <vue-app />
         </div>
     </body>
 </html>
