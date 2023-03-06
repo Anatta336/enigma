@@ -18,6 +18,11 @@
             />
         </div>
 
+        <div class="output">
+            <text-output
+                :text="output"
+            />
+        </div>
     </section>
 </div>
 </template>
@@ -25,11 +30,13 @@
 <script>
 import RotorConfiguration from './RotorConfiguration.vue';
 import TextInput from './TextInput.vue';
+import TextOutput from './TextOutput.vue';
 
 export default {
     components: {
         RotorConfiguration,
         TextInput,
+        TextOutput,
     },
     data() {
         return {
@@ -44,6 +51,7 @@ export default {
                 },
                 input: 'HELLONETMATTERS',
             },
+            output: 'SOMETHING',
         };
     },
 };
