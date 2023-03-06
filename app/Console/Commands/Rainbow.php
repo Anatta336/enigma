@@ -8,12 +8,13 @@ use App\Models\Rotor;
 use App\Service\Rotation;
 use Generator;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Redis;
 
 class Rainbow extends Command
 {
     protected $signature = 'enigma:rainbow {input=HELLONETMATTERS}';
 
-    protected $description = 'Generate a "rainbow table" of all possible rotor setting results for a given message.';
+    protected $description = 'Generate a rainbow table of all possible encodings for a given message.';
 
     /**
      * Execute the console command.
@@ -27,34 +28,34 @@ class Rainbow extends Command
 
         $this->info("Generating rainbow table of {$total} results for: {$input}");
 
-        $results = [];
         $bar = $this->output->createProgressBar($total);
+        $startHrTime = hrtime(true);
 
         foreach ($this->rotorCombinations() as $rotors) {
 
             foreach ($this->indexCombinations() as $indices) {
 
-                $results[] = [
-                    $rotors[0],
-                    $indices[0],
+                $encrypted = $this->encrypt($rotors, $indices, $input);
 
-                    $rotors[1],
-                    $indices[1],
+                // Store results as a set in Redis, keyed by the output.
+                // Using sets as it's possible for multiple settings to result in the same output.
+                $key = $input.'.'.$encrypted;
+                $value = $this->encodeSettings($rotors, $indices);
 
-                    $rotors[2],
-                    $indices[2],
-
-                    $this->encrypt($rotors, $indices, $input),
-                ];
-
-                // @TODO decide how to store these results.
+                // Only add if it's not already there.
+                if (!Redis::sismember($key, $value)) {
+                    Redis::sadd($key, $value);
+                }
 
                 $bar->advance();
             }
         }
 
+        // hrtime gives nanoseconds, which we convert to seconds for display.
+        $formattedSeconds = number_format((hrtime(true) - $startHrTime) / 1_000_000_000, 3);
+
         $this->info('');
-        $this->table(['left', '', 'middle', '', 'right', '', 'encrypted'], $results);
+        $this->info("Complete. Took {$formattedSeconds}s");
     }
 
     /**
@@ -100,6 +101,16 @@ class Rainbow extends Command
                 }
             }
         }
+    }
+
+    protected function encodeSettings(array $rotors, array $indices): string
+    {
+        return $rotors[0].'.'
+            .$indices[0].'.'
+            .$rotors[1].'.'
+            .$indices[1].'.'
+            .$rotors[2].'.'
+            .$indices[2];
     }
 
     protected function encrypt(array $rotors, array $indices, string $input): string
