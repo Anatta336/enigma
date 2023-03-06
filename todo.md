@@ -31,6 +31,12 @@ $rotor = App\Models\Rotor::fromConfig('I');
 Generate how "HELLONETMATTERS" gets encrypted for each of the approx 1 million starting conditions for the 3 rotors.
 
 ### Actions
+[x] Basic command structure.
+[ ] Store data in redis?
+[ ] Estimate time while progressing.
+
+### Data structure
+Access speed is way of looking up via the encrypted result is the important part to get right.
 
 ## Phase 3 - Decryption without plugboard
 So long as we assume the "message code" is always AAA then we'll almost certainly be able to know the full details.
