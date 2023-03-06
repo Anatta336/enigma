@@ -5,6 +5,7 @@
             <input
                 type="text"
                 v-model="internalValue"
+                ref="text-input"
             />
         </div>
     </div>
@@ -38,8 +39,24 @@ export default {
 
     watch: {
         internalValue(value) {
+            const element = this.$refs['text-input'];
+            const initialPosition = element.selectionStart;
+
             // Force to uppercase, and remove anything Enigma cannot handle.
             const trimmed = value.toUpperCase().replaceAll(/[^A-Z]/g, '');
+
+            // Bit if a fiddle, but this avoids the caret jumping to the end of the text input.
+            if (trimmed.length != value.length) {
+                element.selectionEnd = initialPosition - 1;
+                this.$nextTick(() => {
+                    element.selectionEnd = initialPosition - 1;
+                })
+            } else {
+                element.selectionEnd = initialPosition;
+                this.$nextTick(() => {
+                    element.selectionEnd = initialPosition;
+                })
+            }
 
             if (trimmed != value) {
                 this.internalValue = trimmed;
