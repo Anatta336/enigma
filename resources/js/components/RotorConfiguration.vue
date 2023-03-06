@@ -109,8 +109,6 @@ export default {
     },
 };
 </script>
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
-
 <style lang="scss" scoped>
 .rotor-row {
     display: flex;

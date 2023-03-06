@@ -156,11 +156,11 @@ class Rotor
 
     protected function applyOffset(int $value): int
     {
-        return Rotation::constrainByLooping($value + $this->indexRingPosition + $this->rotation);
+        return Rotation::constrainByLooping($value + $this->rotation - $this->indexRingPosition);
     }
 
     protected function revertOffset(int $value): int
     {
-        return Rotation::constrainByLooping($value - ($this->indexRingPosition + $this->rotation));
+        return Rotation::constrainByLooping($value - ($this->rotation - $this->indexRingPosition));
     }
 }

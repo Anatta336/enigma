@@ -21,6 +21,7 @@
         <div class="control">
             <run-button
                 :params="params"
+                @encoded="onEncoded"
             />
         </div>
 
@@ -47,6 +48,7 @@ export default {
         TextOutput,
         RunButton,
     },
+
     data() {
         return {
             params: {
@@ -63,8 +65,16 @@ export default {
             output: 'SOMETHING',
         };
     },
+
+    methods: {
+        onEncoded(result) {
+            this.output = result;
+        },
+    },
 };
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 
 <style lang="scss" scoped>
 .rotor-selects {

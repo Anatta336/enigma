@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EncodeController;
 use App\Http\Controllers\Rotors;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('/v1')->group(function () {
+
+    // GET api/v1/rotors
     Route::get('/rotors', function () {
         return config('enigma.rotors');
     });
+
+    // GET api/v1/encode
+    Route::get('/encode', EncodeController::class);
 });
