@@ -18,11 +18,18 @@
             />
         </div>
 
+        <div class="control">
+            <run-button
+                :params="params"
+            />
+        </div>
+
         <div class="output">
             <text-output
                 :text="output"
             />
         </div>
+
     </section>
 </div>
 </template>
@@ -31,12 +38,14 @@
 import RotorConfiguration from './RotorConfiguration.vue';
 import TextInput from './TextInput.vue';
 import TextOutput from './TextOutput.vue';
+import RunButton from './RunButton.vue';
 
 export default {
     components: {
         RotorConfiguration,
         TextInput,
         TextOutput,
+        RunButton,
     },
     data() {
         return {
